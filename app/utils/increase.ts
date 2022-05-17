@@ -1,0 +1,1 @@
+export const increase:(n:number) => number = (n:number) => n + 1;
