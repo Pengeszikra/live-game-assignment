@@ -1,0 +1,1 @@
+export const hash = ():string =>  Math.random().toString(32).slice(-7);

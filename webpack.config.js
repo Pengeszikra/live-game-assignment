@@ -3,7 +3,7 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-  entry: "./app/index.js",
+  entry: "./app/index.tsx",
   devtool: 'eval-cheap-source-map',
   output: {
     filename: "[name].js",

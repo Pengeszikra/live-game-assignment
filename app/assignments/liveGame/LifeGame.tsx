@@ -1,70 +1,25 @@
-import {useEffect, useState, useCallback, FC} from 'react';
+import {useEffect, useState, useCallback, FC, memo} from 'react';
 import '../../styles/live-games.scss';
+import { hash } from './library/hash';
+import { inRange } from './library/inRange';
+import { increase } from './library/increase';
+import { calcNeighboursDistances } from './control/calcNeighboursDistances';
+import { TArea, CELL, ICell, PLAY } from './control/lifeGameDeclaration';
 
-const cellSize = 22;
-const gridWidth = 40;
-const gridHeight = 30;
-const speed = 32;
+export const cellSize = 22;
+export const gridWidth = 20;
+export const gridHeight = 20;
+export const speed = 32;
 
-const hash:()=>string = () =>  Math.random().toString(32).slice(-7);
-
-enum PLAY { STOP, START }
-enum CELL { DEAD, LIVE }
-
-export interface ICell {
-  cell: CELL,
-  hash: string,
+export interface ICellVisual {
+  hash: string;
+  cell:CELL;
+  neighbour: number;
 }
-
-export type TArea = ICell[];
-
-export const inRange = (low:number, high:number ) => (value:number) => value >= low && value <= high;
-
-export const increase:(n:number) => number = (n:number) => n + 1;
-
-export const calcNeighboursDistances:(width:number, height:number) => number[][] = 
-  (width:number, height:number) => {
-    const neighboursDistance:number[] = [
-      -1 -width, -width, +1-width,
-      -1, +1,
-      -1 +width, +width, +1+width,
-    ];
-
-    const leftBorder:number[] = [1, 2, 4, 6, 7];
-    const rightBorder:number[] = [0, 1, 3, 5, 6];
-
-    const withoutLeftBorder:(x:number) => (d:number, n:number) => boolean = 
-      (x:number) => (distance:number, neighbourDistanceIndex:number) => x === 0 
-        ? leftBorder.includes(neighbourDistanceIndex)
-        : true
-      ;
-
-    const withoutRightBorder:(x:number) => (d:number, n:number) => boolean = 
-      (x:number) => (distance:number, neighbourDistanceIndex) => x === width-1 
-        ? rightBorder.includes(neighbourDistanceIndex)
-        : true
-      ;
-
-    const amount:number = width * height;
-    const isInside:(n:number) => boolean = inRange(0, amount - 1);
-
-    return Array(amount)
-      .fill(0)
-      .map(
-        (_, index:number) => {
-          const x:number = index % width;
-          return neighboursDistance
-            .filter(withoutLeftBorder(x))
-            .filter(withoutRightBorder(x))
-            .map((distance:number) => distance + index)
-            .filter((distance:number) => isInside(distance))
-          ;
-        }
-      )
-    ;
-  };
+const CellVisual:FC<ICellVisual> = ({hash, cell, neighbour}) =>  <div className="cell" key={hash} data-cell={cell}>{neighbour}</div>
+const QuickCell = memo(CellVisual);
  
-export const LiveGame:FC = () => {
+export const LifeGame:FC = () => {
   const [area, setArea] = useState<TArea>([]);
   const [debugNh, setDebugNh] = useState<number[]>([]);
   const [round, setRound] = useState<number>(0);
@@ -72,6 +27,7 @@ export const LiveGame:FC = () => {
   const [width, setWidth] = useState<number>(gridWidth);
   const [height, setHeight] = useState<number>(gridHeight);
   const [isPlaying, playControll] = useState<PLAY>(PLAY.STOP);
+
 
   const neighboursIndex:number[][] = useCallback(calcNeighboursDistances(width, height), [width, height]);
 
@@ -153,7 +109,7 @@ export const LiveGame:FC = () => {
       <section className="live-area" style={{gridTemplate: `repeat(${height}, ${cellSize}px) / repeat(${width}, ${cellSize}px)`}}>
         {
           area.map(({cell, hash}, index) => (
-            <div className="cell" key={hash} data-cell={cell}>{debugNh?.[index]}</div>
+            <QuickCell cell={cell} hash={hash} neighbour={debugNh[index]} />
           ))
         }
       </section>

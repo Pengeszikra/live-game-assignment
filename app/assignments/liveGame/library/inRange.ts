@@ -1,0 +1,1 @@
+export const inRange = (low:number, high:number ) => (value:number) => value >= low && value <= high;

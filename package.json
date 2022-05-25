@@ -1,8 +1,8 @@
 {
-  "name": "trivia-challenge",
+  "name": "life-game-assignment",
   "version": "0.0.1",
-  "description": "test task for Cheepers",
-  "main": "index.js",
+  "description": "greeHill assignment",
+  "main": "index.tsx",
   "author": "vivo.peter@protonmail.com",
   "license": "MIT",
   "scripts": {
