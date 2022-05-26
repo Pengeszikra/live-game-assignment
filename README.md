@@ -1,4 +1,4 @@
-# Live Game Assignment
+# Life Game Assignment
 
 
 

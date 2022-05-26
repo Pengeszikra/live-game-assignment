@@ -7,8 +7,8 @@ import { calcNeighboursDistances } from './control/calcNeighboursDistances';
 import { TArea, CELL, ICell, PLAY } from './control/lifeGameDeclaration';
 
 export const cellSize = 22;
-export const gridWidth = 20;
-export const gridHeight = 20;
+export const gridWidth = 30;
+export const gridHeight = 30;
 export const speed = 32;
 
 export interface ICellVisual {
@@ -17,7 +17,8 @@ export interface ICellVisual {
   neighbour: number;
 }
 const CellVisual:FC<ICellVisual> = ({hash, cell, neighbour}) =>  <div className="cell" key={hash} data-cell={cell}>{neighbour}</div>
-const QuickCell = memo(CellVisual);
+const CellVisualNoDebug:FC<ICellVisual> = ({hash, cell}) =>  <div className="cell" key={hash} data-cell={cell}></div>
+const QuickCell = memo(CellVisualNoDebug);
  
 export const LifeGame:FC = () => {
   const [area, setArea] = useState<TArea>([]);
@@ -97,19 +98,22 @@ export const LifeGame:FC = () => {
     setDebugNh(newGeneration.map((_,i) => amountOfNeighbours(i)));
   }, [round, width, height]);
 
+  const countLife = area.reduce((sum, {cell}) => sum + (cell === CELL.LIVE ? 1 : 0), 0);
+
   return (
     <main>
       <section className="live-control">
-        <h2>Live Game Assignment</h2>
-        <p>round: {round}</p>
+        <h2>Life Game Assignment</h2>
+        <p>round: {round} <span>life: {countLife} </span></p>
         <button onClick={() => setRound(increase)}>next step</button>
-        <button onClick={() => setCountOfPlay(increase)}>random</button>
+        <button onClick={() => {setCountOfPlay(increase); playControll(PLAY.STOP)}}>random</button>
         <button onClick={() => playControll(isPlaying ? PLAY.STOP : PLAY.START)}>{isPlaying ? 'stop' : 'play'}</button>
       </section>
       <section className="live-area" style={{gridTemplate: `repeat(${height}, ${cellSize}px) / repeat(${width}, ${cellSize}px)`}}>
-        {
+        { 
           area.map(({cell, hash}, index) => (
-            <QuickCell cell={cell} hash={hash} neighbour={debugNh[index]} />
+            // <QuickCell cell={cell} hash={hash} neighbour={debugNh[index]} />
+            <QuickCell cell={cell} hash={hash} />
           ))
         }
       </section>
