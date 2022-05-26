@@ -7,9 +7,9 @@ import { calcNeighboursDistances } from './control/calcNeighboursDistances';
 import { TArea, CELL, ICell, PLAY } from './control/lifeGameDeclaration';
 
 export const cellSize = 22;
-export const gridWidth = 30;
-export const gridHeight = 30;
-export const speed = 32;
+export const gridWidth = 27;
+export const gridHeight = 27;
+export const speed = 64;
 
 export interface ICellVisual {
   hash: string;
@@ -30,6 +30,9 @@ export const LifeGame:FC = () => {
   const [height, setHeight] = useState<number>(gridHeight);
   const [isPlaying, playControll] = useState<PLAY>(PLAY.STOP);
   const [isDebug, setDebug] = useState<boolean>(false);
+  const [isEditing, setEditing] = useState<boolean>(false);
+  const [score, setScore] = useState<number>(0);
+  const [liveCounter, setLiveCounter] = useState<number>(0);
 
 
   const neighboursIndex:number[][] = useCallback(calcNeighboursDistances(width, height), [width, height]);
@@ -37,11 +40,13 @@ export const LifeGame:FC = () => {
   useEffect(() => console.log(neighboursIndex), [neighboursIndex]);
 
   useEffect(() => {
-    const defaultArea:TArea = Array(width * height)
-      .fill({cell:CELL.DEAD, hash:''})
-      .map(_ => ({cell: Math.random() > .75 ? CELL.LIVE : CELL.DEAD, hash:hash()}))
+    const defaultArea:TArea = Array.from(
+      {length: width * height},
+      _ => ({cell: Math.random() > .75 ? CELL.LIVE : CELL.DEAD, hash:hash()})
+    );
     setArea(defaultArea);
     setRound(0);
+    setScore(0);
     const amountOfNeighbours:(position:number) => number = countNeighbours(defaultArea);
     setDebugNh(defaultArea.map((_,i) => amountOfNeighbours(i)));
 
@@ -97,25 +102,32 @@ export const LifeGame:FC = () => {
     const newGeneration = nextGeneration(area);
     setArea(newGeneration);
     const amountOfNeighbours:(position:number) => number = countNeighbours(newGeneration);
-    setDebugNh(newGeneration.map((_,i) => amountOfNeighbours(i)));
+    isDebug && setDebugNh(newGeneration.map((_,i) => amountOfNeighbours(i)));
+    const countOfLive = area.reduce((sum, {cell}) => sum + (cell === CELL.LIVE ? 1 : 0), 0);
+    setScore(score => countOfLive === liveCounter ? score : score + countOfLive);
+    setLiveCounter(countOfLive);
   }, [round, width, height]);
-
-  const countLife = area.reduce((sum, {cell}) => sum + (cell === CELL.LIVE ? 1 : 0), 0);
 
   return (
     <main>
       <section className="live-control" style={{fontFamily:'monospace'}}>
-        <button onClick={() => setRound(increase)}>next step</button>
-        <button onClick={() => {setCountOfPlay(increase); playControll(PLAY.STOP)}}>random</button>
-        <button onClick={() => playControll(isPlaying ? PLAY.STOP : PLAY.START)}>{isPlaying ? 'stop' : 'play'}</button>
+        <button onClick={() => setEditing(!isEditing)}>edit {isEditing ? " on" : "off"}</button>
+        <button onClick={() => setRound(increase)} disabled={isEditing}>next step</button>
+        <button onClick={() => {setCountOfPlay(increase); playControll(PLAY.STOP)}} disabled={isEditing}>random</button>
+        <button onClick={() => playControll(isPlaying ? PLAY.STOP : PLAY.START)} disabled={isEditing}>{isPlaying ? 'stop' : 'play'}</button>
         <button onClick={() => setDebug(p => !p)}>{isDebug ? 'debug' : 'simple'}</button>
-        <span style={{marginLeft:'1em'}}>round: {round} <span>life: {countLife} </span></span>
+        <span style={{marginLeft:'1em'}}>
+          <span>round: {round} </span>
+          <span>life: {liveCounter} </span>
+          <span>score: {score} </span>
+        </span>
       </section>
       <section className="live-area" style={{gridTemplate: `repeat(${height}, ${cellSize}px) / repeat(${width}, ${cellSize}px)`}}>
         { 
-          area.map(({cell, hash}, index) => ( isDebug
-            ? <QuickCellWithDebug cell={cell} hash={hash} neighbour={debugNh[index]} />
-            : <QuickCell cell={cell} hash={hash} />
+          area.map(({cell, hash}, index) => ( 
+            isDebug
+              ? <QuickCellWithDebug cell={cell} hash={hash} neighbour={debugNh[index]} />
+              : <QuickCell cell={cell} hash={hash} />
           ))
         }
       </section>

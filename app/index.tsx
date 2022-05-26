@@ -8,6 +8,6 @@ const renderToAppId = (application:React.ReactElement<any, any>) => render(appli
 
 renderToAppId((
   <React.StrictMode>
-     <MultipleExample amount={2} />
+     <MultipleExample amount={1} />
   </React.StrictMode>
 ));
