@@ -14,11 +14,12 @@ export const speed = 32;
 export interface ICellVisual {
   hash: string;
   cell:CELL;
-  neighbour: number;
+  neighbour?: number;
 }
 const CellVisual:FC<ICellVisual> = ({hash, cell, neighbour}) =>  <div className="cell" key={hash} data-cell={cell}>{neighbour}</div>
 const CellVisualNoDebug:FC<ICellVisual> = ({hash, cell}) =>  <div className="cell" key={hash} data-cell={cell}></div>
 const QuickCell = memo(CellVisualNoDebug);
+const QuickCellWithDebug = memo(CellVisual);
  
 export const LifeGame:FC = () => {
   const [area, setArea] = useState<TArea>([]);
@@ -28,6 +29,7 @@ export const LifeGame:FC = () => {
   const [width, setWidth] = useState<number>(gridWidth);
   const [height, setHeight] = useState<number>(gridHeight);
   const [isPlaying, playControll] = useState<PLAY>(PLAY.STOP);
+  const [isDebug, setDebug] = useState<boolean>(false);
 
 
   const neighboursIndex:number[][] = useCallback(calcNeighboursDistances(width, height), [width, height]);
@@ -102,18 +104,18 @@ export const LifeGame:FC = () => {
 
   return (
     <main>
-      <section className="live-control">
-        <h2>Life Game Assignment</h2>
-        <p>round: {round} <span>life: {countLife} </span></p>
+      <section className="live-control" style={{fontFamily:'monospace'}}>
         <button onClick={() => setRound(increase)}>next step</button>
         <button onClick={() => {setCountOfPlay(increase); playControll(PLAY.STOP)}}>random</button>
         <button onClick={() => playControll(isPlaying ? PLAY.STOP : PLAY.START)}>{isPlaying ? 'stop' : 'play'}</button>
+        <button onClick={() => setDebug(p => !p)}>{isDebug ? 'debug' : 'simple'}</button>
+        <span style={{marginLeft:'1em'}}>round: {round} <span>life: {countLife} </span></span>
       </section>
       <section className="live-area" style={{gridTemplate: `repeat(${height}, ${cellSize}px) / repeat(${width}, ${cellSize}px)`}}>
         { 
-          area.map(({cell, hash}, index) => (
-            // <QuickCell cell={cell} hash={hash} neighbour={debugNh[index]} />
-            <QuickCell cell={cell} hash={hash} />
+          area.map(({cell, hash}, index) => ( isDebug
+            ? <QuickCellWithDebug cell={cell} hash={hash} neighbour={debugNh[index]} />
+            : <QuickCell cell={cell} hash={hash} />
           ))
         }
       </section>
