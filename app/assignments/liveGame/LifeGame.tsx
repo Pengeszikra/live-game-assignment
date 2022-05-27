@@ -57,6 +57,12 @@ export const LifeGame:FC = () => {
     setDebugNh(defaultArea.map((_,i) => amountOfNeighbours(i)));
 
   }, [countOfPlay])
+
+  useEffect(() => {
+    if (!isEditing) return;
+    const amountOfNeighbours:(position:number) => number = countNeighbours(area);
+    setDebugNh(area.map((_,i) => amountOfNeighbours(i)));
+  }, [area])
   
   const countNeighbours = (area:TArea) => (position:number) => neighboursIndex[position].reduce(
     (count:number, neighbourIndex:number) => count = area[neighbourIndex].cell
@@ -122,20 +128,30 @@ export const LifeGame:FC = () => {
       : item
     ));
   };
+  
+  const clearArea = () => {
+    if (!isEditing) return;
+    const clearArea:TArea = Array.from(
+      {length: width * height},
+      (_, index) => ({cell: CELL.DEAD, hash:`${index % width}:${index / width | 0}`})
+    );
+    setArea(clearArea);  
+  }
 
   return (
     <main>
       <section className="live-control" style={{fontFamily:'monospace'}}>
         <button onClick={() => setEditing(!isEditing)}>edit {isEditing ? " on" : "off"}</button>
+        <button onClick={clearArea} disabled={!isEditing}>clear</button>
         <button onClick={() => setRound(increase)} disabled={isEditing}>next step</button>
         <button onClick={() => {setCountOfPlay(increase); playControll(PLAY.STOP)}} disabled={isEditing}>random</button>
         <button onClick={() => playControll(isPlaying ? PLAY.STOP : PLAY.START)} disabled={isEditing}>{isPlaying ? 'stop' : 'play'}</button>
         <button onClick={() => setDebug(p => !p)}>{isDebug ? 'debug' : 'simple'}</button>
-        <span style={{marginLeft:'1em'}}>
+        <section style={{margin:'1em'}}>
           <span>round: {round} </span>
           <span>life: {liveCounter} </span>
           <span>score: {score} </span>
-        </span>
+        </section>
       </section>
       <section className="live-area" style={{gridTemplate: `repeat(${height}, ${cellSize}px) / repeat(${width}, ${cellSize}px)`}}>
         { 
