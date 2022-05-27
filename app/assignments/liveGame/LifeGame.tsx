@@ -1,4 +1,5 @@
-import {useEffect, useState, useCallback, FC, memo} from 'react';
+import { useEffect, useState, useCallback, memo } from 'react';
+import { FC, MouseEvent} from 'react';
 import '../../styles/live-games.scss';
 import { hash } from './library/hash';
 import { inRange } from './library/inRange';
@@ -7,16 +8,22 @@ import { calcNeighboursDistances } from './control/calcNeighboursDistances';
 import { TArea, CELL, ICell, PLAY } from './control/lifeGameDeclaration';
 
 export const cellSize = 22;
-export const gridWidth = 27;
-export const gridHeight = 27;
+export const gridWidth = 22;
+export const gridHeight = 22;
 export const speed = 64;
+
+export type TMouseEventHandler = (event?:MouseEvent) => void;
 
 export interface ICellVisual {
   hash: string;
   cell:CELL;
   neighbour?: number;
+  onClick?: TMouseEventHandler;
 }
-const CellVisual:FC<ICellVisual> = ({hash, cell, neighbour}) =>  <div className="cell" key={hash} data-cell={cell}>{neighbour}</div>
+
+export const logMouseEvent:TMouseEventHandler = (event) => {console.log(event)};
+
+const CellVisual:FC<ICellVisual> = ({hash, cell, neighbour, onClick = logMouseEvent}) =>  <div className="cell" key={hash} data-cell={cell} onClick={onClick}>{neighbour}</div>
 const CellVisualNoDebug:FC<ICellVisual> = ({hash, cell}) =>  <div className="cell" key={hash} data-cell={cell}></div>
 const QuickCell = memo(CellVisualNoDebug);
 const QuickCellWithDebug = memo(CellVisual);
@@ -34,7 +41,6 @@ export const LifeGame:FC = () => {
   const [score, setScore] = useState<number>(0);
   const [liveCounter, setLiveCounter] = useState<number>(0);
 
-
   const neighboursIndex:number[][] = useCallback(calcNeighboursDistances(width, height), [width, height]);
 
   useEffect(() => console.log(neighboursIndex), [neighboursIndex]);
@@ -42,7 +48,7 @@ export const LifeGame:FC = () => {
   useEffect(() => {
     const defaultArea:TArea = Array.from(
       {length: width * height},
-      _ => ({cell: Math.random() > .75 ? CELL.LIVE : CELL.DEAD, hash:hash()})
+      (_, index) => ({cell: Math.random() > .75 ? CELL.LIVE : CELL.DEAD, hash:`${index % width}:${index / width | 0}`})
     );
     setArea(defaultArea);
     setRound(0);
@@ -108,6 +114,15 @@ export const LifeGame:FC = () => {
     setLiveCounter(countOfLive);
   }, [round, width, height]);
 
+  const handleEdit = (seek) => (event:MouseEvent) => {
+    setArea(area => area.map(item => seek === item.hash 
+      ? item.cell === CELL.DEAD 
+        ? {hash:item.hash, cell:CELL.LIVE}
+        : {hash:item.hash, cell:CELL.DEAD}
+      : item
+    ));
+  };
+
   return (
     <main>
       <section className="live-control" style={{fontFamily:'monospace'}}>
@@ -124,11 +139,13 @@ export const LifeGame:FC = () => {
       </section>
       <section className="live-area" style={{gridTemplate: `repeat(${height}, ${cellSize}px) / repeat(${width}, ${cellSize}px)`}}>
         { 
-          area.map(({cell, hash}, index) => ( 
-            isDebug
-              ? <QuickCellWithDebug cell={cell} hash={hash} neighbour={debugNh[index]} />
-              : <QuickCell cell={cell} hash={hash} />
-          ))
+          area.map(({cell, hash}, index) => {
+            return ( 
+              isDebug
+                ? <QuickCellWithDebug cell={cell} hash={hash} neighbour={debugNh[index]} onClick={handleEdit(hash)}/>
+                : <QuickCell cell={cell} hash={hash} onClick={handleEdit(hash)}/>
+            );
+          })
         }
       </section>
     </main>
