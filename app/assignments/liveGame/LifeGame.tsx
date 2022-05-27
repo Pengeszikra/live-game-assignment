@@ -24,7 +24,7 @@ export interface ICellVisual {
 export const logMouseEvent:TMouseEventHandler = (event) => {console.log(event)};
 
 const CellVisual:FC<ICellVisual> = ({hash, cell, neighbour, onClick = logMouseEvent}) =>  <div className="cell" key={hash} data-cell={cell} onClick={onClick}>{neighbour}</div>
-const CellVisualNoDebug:FC<ICellVisual> = ({hash, cell}) =>  <div className="cell" key={hash} data-cell={cell}></div>
+const CellVisualNoDebug:FC<ICellVisual> = ({hash, cell, onClick = logMouseEvent}) =>  <div className="cell" key={hash} data-cell={cell} onClick={onClick}></div>
 const QuickCell = memo(CellVisualNoDebug);
 const QuickCellWithDebug = memo(CellVisual);
  
