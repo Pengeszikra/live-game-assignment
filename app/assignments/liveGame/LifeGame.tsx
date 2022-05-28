@@ -23,7 +23,7 @@ export interface ICellVisual {
 
 export const logMouseEvent:TMouseEventHandler = (event) => {console.log(event)};
 
-const CellVisual:FC<ICellVisual> = ({hash, cell, neighbour, onClick = logMouseEvent}) =>  <div className="cell" key={hash} data-cell={cell} onClick={onClick}>{neighbour}</div>
+const CellVisual:FC<ICellVisual> = ({hash, cell, neighbour, onClick = logMouseEvent}) =>  <div className="cell" key={hash} data-cell={cell} data-around={neighbour} onClick={onClick}>{neighbour}</div>
 const CellVisualNoDebug:FC<ICellVisual> = ({hash, cell, onClick = logMouseEvent}) =>  <div className="cell" key={hash} data-cell={cell} onClick={onClick}></div>
 const QuickCell = memo(CellVisualNoDebug);
 const QuickCellWithDebug = memo(CellVisual);
@@ -141,7 +141,7 @@ export const LifeGame:FC = () => {
   return (
     <main>
       <section className="live-control" style={{fontFamily:'monospace'}}>
-        <button onClick={() => setEditing(!isEditing)}>edit {isEditing ? " on" : "off"}</button>
+        <button onClick={() => {if (!isEditing) {setRound(0);setScore(0)};setEditing(!isEditing)}}>edit {isEditing ? " on" : "off"}</button>
         <button onClick={clearArea} disabled={!isEditing}>clear</button>
         <button onClick={() => setRound(increase)} disabled={isEditing}>next step</button>
         <button onClick={() => {setCountOfPlay(increase); playControll(PLAY.STOP)}} disabled={isEditing}>random</button>
