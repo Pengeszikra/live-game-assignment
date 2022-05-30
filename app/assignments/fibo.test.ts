@@ -1,16 +1,18 @@
-const fib = n => n < 2
-  ? n 
-  : fib(n - 1) + fib(n - 2)
+type Memoized<T> = (parameter:T, memo?:T[]) => T;
+
+const fib:Memoized<number> = index => index < 2
+  ? index 
+  : fib(index - 1) + fib(index - 2)
 ;
 
-const fibonacci = (num, memo = {}) => {
-  if (memo[num]) return memo[num];
-  if (num < 2) return num;
-  memo[num] = fibonacci(num - 1, memo) + fibonacci(num - 2, memo);
-  return memo[num];
+const fibonacci:Memoized<number> = (index, memo = []) => {
+  if (memo[index]) return memo[index];
+  if (index < 2) return index;
+  memo[index] = fibonacci(index - 1, memo) + fibonacci(index - 2, memo);
+  return memo[index];
 };
 
-const fibExample = [0, 1, 1, 2, 3, 5, 8, 13, 21];
+const fibExample:number[] = [0, 1, 1, 2, 3, 5, 8, 13, 21];
 
 test ('fibonacci : 3', () => {
   expect (
