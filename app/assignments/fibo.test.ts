@@ -5,6 +5,12 @@ const fib:Memoized<number> = index => index < 2
   : fib(index - 1) + fib(index - 2)
 ;
 
+const reducerFibo = (index) => Array(index)
+  .fill(0)
+  .reduce((acu) => [...acu, acu.at(-1) + acu.at(-2)],  [0, 1])
+  .at(index)
+;
+
 const fibonacci:Memoized<number> = (index, memo = []) => {
   if (memo[index]) return memo[index];
   if (index < 2) return index;
@@ -33,6 +39,15 @@ test ('fibonacci : each of example', () => {
 
 test ('memoised fibonacci : each of example', () => {
   const series = fibExample.map((_, index) => fibonacci(index));
+  expect (
+    series
+  ).toStrictEqual(
+    fibExample
+  );
+});
+
+test ('worst fibonacci : each of example', () => {
+  const series = fibExample.map((_, index) => reducerFibo(index));
   expect (
     series
   ).toStrictEqual(
