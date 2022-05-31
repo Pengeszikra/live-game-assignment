@@ -138,32 +138,36 @@ export const LifeGame:FC = () => {
     setArea(clearArea);  
   }
 
+  const twButton = "rounded bg-stone-200 border-2 border-gray-300 m-1 p-1 disabled:opacity-30 grow";
+
   return (
-    <main>
-      <section className="w-2/3 m-auto flex" style={{fontFamily:'monospace'}}>
-        <button onClick={() => {if (!isEditing) {setRound(0);setScore(0)};setEditing(!isEditing)}}>edit {isEditing ? " on" : "off"}</button>
-        <button onClick={clearArea} disabled={!isEditing}>clear</button>
-        <button onClick={() => setRound(increase)} disabled={isEditing}>next step</button>
-        <button onClick={() => {setCountOfPlay(increase); playControll(PLAY.STOP)}} disabled={isEditing}>random</button>
-        <button onClick={() => playControll(isPlaying ? PLAY.STOP : PLAY.START)} disabled={isEditing}>{isPlaying ? 'stop' : 'play'}</button>
-        <button onClick={() => setDebug(p => !p)}>{isDebug ? 'debug' : 'simple'}</button>
-        <section style={{margin:'1em'}}>
-          <span>round: {round} </span>
-          <span>life: {liveCounter} </span>
-          <span>score: {score} </span>
+    <section className='relative flex min-h-screen flex-col justify-center overflow-hidden py-6 sm:py-12'>
+      <main className="m-auto p-3 rounded-lg shadow-gray-700 shadow-lg font-mono bg-white">
+        <section className='flex'>
+          <button className={twButton} onClick={() => {if (!isEditing) {setRound(0);setScore(0)};setEditing(!isEditing)}}>edit {isEditing ? " on" : "off"}</button>
+          <button className={twButton} onClick={clearArea} disabled={!isEditing}>clear</button>
+          <button className={twButton} onClick={() => setRound(increase)} disabled={isEditing}>next step</button>
+          <button className={twButton} onClick={() => {setCountOfPlay(increase); playControll(PLAY.STOP)}} disabled={isEditing}>random</button>
+          <button className={twButton} onClick={() => playControll(isPlaying ? PLAY.STOP : PLAY.START)} disabled={isEditing}>{isPlaying ? 'stop' : 'play'}</button>
+          <button className={twButton} onClick={() => setDebug(p => !p)}>{isDebug ? 'debug' : 'simple'}</button>
         </section>
-      </section>
-      <section className="live-area" style={{gridTemplate: `repeat(${height}, ${cellSize}px) / repeat(${width}, ${cellSize}px)`}}>
-        { 
-          area.map(({cell, hash}, index) => {
-            return ( 
-              isDebug
-                ? <QuickCellWithDebug cell={cell} hash={hash} neighbour={debugNh[index]} onClick={handleEdit(hash)}/>
-                : <QuickCell cell={cell} hash={hash} onClick={handleEdit(hash)}/>
-            );
-          })
-        }
-      </section>
-    </main>
+          <section className="m-2">
+            <span>round: {round} </span>
+            <span>life: {liveCounter} </span>
+            <span>score: {score} </span>
+          </section>
+        <section className="live-area" style={{gridTemplate: `repeat(${height}, ${cellSize}px) / repeat(${width}, ${cellSize}px)`}}>
+          { 
+            area.map(({cell, hash}, index) => {
+              return ( 
+                isDebug
+                  ? <QuickCellWithDebug cell={cell} hash={hash} neighbour={debugNh[index]} onClick={handleEdit(hash)}/>
+                  : <QuickCell cell={cell} hash={hash} onClick={handleEdit(hash)}/>
+              );
+            })
+          }
+        </section>
+      </main>
+    </section>
   )
 }
