@@ -7,9 +7,9 @@ import { increase } from './library/increase';
 import { calcNeighboursDistances } from './control/calcNeighboursDistances';
 import { TArea, CELL, ICell, PLAY } from './control/lifeGameDeclaration';
 
-export const cellSize = 22;
-export const gridWidth = 22;
-export const gridHeight = 22;
+export const cellSize = 18;
+export const gridWidth = 30;
+export const gridHeight = 30;
 export const speed = 64;
 
 export type TMouseEventHandler = (event?:MouseEvent) => void;
