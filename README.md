@@ -15,9 +15,14 @@ I will reafact codebase with help of react-troll to useReducer.
 ### *Optimalization*
 I will change the model to simple Int8Array, plus use one cell higher area, which one is simplify the work with border points.
 
+### *Tailwind*
+Just for try I added tailwind to this app. Imho interesting solution.
+
+![dual play](./app/assignments/liveGame/_document_/dual-play.png)
+
 # Build
 
-> Build :: ```react```, ```typescript```, ```webpack```, ```jest```.
+> Build :: ```react```, ```typescript```, ```webpack```, ```jest```, ```tailwind```.
 
 ## Prerequisite:
   - ```npm``` v8.1+

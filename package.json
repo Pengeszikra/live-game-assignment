@@ -17,7 +17,8 @@
     "react",
     "react-troll",
     "ts",
-    "fp"
+    "fp",
+    "tailwind"
   ],
   "devDependencies": {
     "@babel/core": "^7.10.4",
