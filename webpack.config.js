@@ -12,7 +12,7 @@ module.exports = {
   module: {
     rules: [
       { test: /\.(js|jsx|ts|tsx)$/, exclude: /node_modules/, use: ["babel-loader"] },
-      { test: /\.(css|scss)$/, use: ["style-loader", "css-loader", "sass-loader"] },
+      { test: /\.(css|scss)$/, use: ["style-loader", "css-loader", "sass-loader", "postcss-loader"] },
       { test: /\.html$/, use: "html-loader" },
       { test: /\.(glsl)$/, use: "webpack-glsl-loader" },
     ],

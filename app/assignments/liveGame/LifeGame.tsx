@@ -140,7 +140,7 @@ export const LifeGame:FC = () => {
 
   return (
     <main>
-      <section className="live-control" style={{fontFamily:'monospace'}}>
+      <section className="w-2/3 m-auto flex" style={{fontFamily:'monospace'}}>
         <button onClick={() => {if (!isEditing) {setRound(0);setScore(0)};setEditing(!isEditing)}}>edit {isEditing ? " on" : "off"}</button>
         <button onClick={clearArea} disabled={!isEditing}>clear</button>
         <button onClick={() => setRound(increase)} disabled={isEditing}>next step</button>

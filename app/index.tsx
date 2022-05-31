@@ -1,8 +1,8 @@
 import React from 'react';
 import { render } from "react-dom";
-import 'bootstrap/dist/css/bootstrap.min.css';
 // import { LifeGame } from './assignments/liveGame/LifeGame';
 import { MultipleExample } from './assignments/MultipleExample';
+import './tailwind-import.css';
 
 const renderToAppId = (application:React.ReactElement<any, any>) => render(application, document.getElementById('app'));
 
