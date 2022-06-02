@@ -41,7 +41,7 @@ test ('filtered test', () => {
 const listReducer = (list, ...params) => list.reduce(...params);
 
 const recreatedReducer = (list, reduceCallback, acu) => list
-  .map((_item, _index) => acu  = reduceCallback(acu, _item, _index, list))
+  .map((_item, _index) => acu = reduceCallback(acu, _item, _index, list))
   .at(-1)
 ;
 
