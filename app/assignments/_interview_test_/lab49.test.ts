@@ -2,7 +2,7 @@ const productionList = [
   {production: 'Apple', category: 'Fruit'},
   {production: 'Cherry', category: 'Fruit'},
   {production: 'Mazda', category: 'Car'},
-]
+];
 
 const salesList = [
   {production: 'Apple', sales: 362},
@@ -52,3 +52,4 @@ test ('reducer recreate', () => {
     {Fruit: 362 + 111, Car: 3}
   );
 });
+

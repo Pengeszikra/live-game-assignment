@@ -20,4 +20,10 @@ body, html {
   display: grid;
   place-items: center;
   user-select: none;
+
+  &[data-focus="true"] {
+    background-color: red;
+  }
 }
+
+
