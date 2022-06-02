@@ -10,7 +10,8 @@ const salesList = [
   {production: 'Mazda', sales: 3},
 ];
 
-const sqlQuery = (itemDB, saleDB) => saleDB.reduce(
+const sqlQuery = (itemDB, saleDB, dbReducer = listReducer) => dbReducer(
+  saleDB,
   (acu, {production, sales}) => {
     const {category} = itemDB.find(({production:id}) => id === production)
     if (!category) return acu;
@@ -34,5 +35,20 @@ test ('filtered test', () => {
     sqlQuery(productionList, salesList.filter(({sales}) => sales > 100))
   ).toStrictEqual(
     {Fruit: 362 + 111}
+  );
+});
+
+const listReducer = (list, ...params) => list.reduce(...params);
+
+const recreatedReducer = (list, reduceCallback, acu) => list
+  .map((_item, _index) => acu  = reduceCallback(acu, _item, _index, list))
+  .at(-1)
+;
+
+test ('reducer recreate', () => {
+  expect (
+    sqlQuery(productionList, salesList, recreatedReducer)
+  ).toStrictEqual(
+    {Fruit: 362 + 111, Car: 3}
   );
 });
