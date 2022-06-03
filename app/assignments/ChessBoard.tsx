@@ -8,11 +8,14 @@ enum Screens {
   INPUT, BOARD, RESULT
 }
 
+const twButton = "rounded bg-stone-200 border-2 border-gray-300 m-1 p-1 disabled:opacity-30 grow";
+const twInput = "p-2 m-2 text-center bg-zinc-200 border-2 border-slate-400";
+
 export const ChessBoard = () => {
 
   const [screen, setScreen ] = useState<Screens>(Screens.INPUT);
   const [dimension, setDimesion] = useState(7);
-  const [amountOfSteps, setAmountOfSteps] = useState(1);
+  const [amountOfSteps, setAmountOfSteps] = useState(3);
   const [board, setBoard] = useState([]);
   const [result, setResult] = useState([]);
   const [setpsAreDone, setSetpsAreDone] = useState(0);
@@ -33,6 +36,12 @@ export const ChessBoard = () => {
     }
   }, [setpsAreDone, amountOfSteps])
 
+  useEffect(() => {
+    if (screen !== Screens.INPUT) return;
+    setSetpsAreDone(0);
+    setResult([]);
+  }, [screen])
+
   const handleChangeDimension = ({target:{value}}) => setDimesion(value);
   const handleAmountOfSteps = ({target:{value}}) => setAmountOfSteps(value);
 
@@ -48,13 +57,14 @@ export const ChessBoard = () => {
   }
 
   return (
-    <main>
+    <section className='relative flex min-h-screen flex-col justify-center overflow-hidden py-6 sm:py-12'>
+    <main className="m-auto p-3 rounded-lg shadow-gray-700 shadow-lg font-mono bg-white">
       {
         screen === Screens.INPUT && (
           <section className="grid">
-            <input className="p-2 m-2 text-center" value={dimension} onChange={handleChangeDimension}></input>
-            <input className="p-2 m-2 text-center" value={amountOfSteps} onChange={handleAmountOfSteps}></input>
-            <button className="p-2 m-2 bg-slate-300" onClick={() => setScreen(Screens.BOARD)}>ok</button>
+            <input className={twInput} value={dimension} onChange={handleChangeDimension}></input>
+            <input className={twInput} value={amountOfSteps} onChange={handleAmountOfSteps}></input>
+            <button className={twButton} onClick={() => setScreen(Screens.BOARD)}>ok</button>
           </section>
         )
       }
@@ -64,20 +74,20 @@ export const ChessBoard = () => {
             {board.map( (item, index) => (
               <pre className="cell" key={index} id={index} data-cell={item} data-focus={focus === index} onClick={handleMove}></pre>
             ))}
-            <pre>{`${setpsAreDone} / ${amountOfSteps}`}</pre>
+            <pre className="p-2 bg-zinc-300">{`${setpsAreDone} / ${amountOfSteps}`}</pre>
           </section>    
         )
       }
       {
         screen === Screens.RESULT && (
           <section>
-            <h1>Thank you</h1>
-            <pre>{JSON.stringify(result, null, 2)}</pre>
-            <button onClick={() => setScreen(Screens.INPUT)}>Start Over</button>
+            <h1 className="font-size-3">Thank you</h1>
+            <pre>{JSON.stringify(result)}</pre>
+            <button className={twButton} onClick={() => setScreen(Screens.INPUT)}>Start Over</button>
           </section>    
         )
       }
 
-    </main>
+    </main></section>
   )
 }
